@@ -1,0 +1,6 @@
+name: Slice
+main: com.nuclearw.slice.SlicePlugin
+version: ${project.version}
+author: NuclearW
+description: Slice creates a private slice of nether for its owner and their friends.
+load: startup

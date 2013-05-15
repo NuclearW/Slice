@@ -3,6 +3,7 @@ package com.nuclearw.slice;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -112,6 +113,54 @@ public class Slice implements ConfigurationSerializable {
 
 		// TODO: Add SliceExitPortal to ConfigurationSerialization
 		result.put("exits", new LinkedList<SliceExitPortal>(exits));
+
+		return result;
+	}
+
+	public static Slice deserialize(Map<String, Object> input) {
+		if(!input.containsKey("id") || !input.containsKey("owners")) {
+			return null;
+		}
+
+		Object id = input.get("id");
+		Object owner = input.get("owner");
+
+		if(!(id instanceof Integer) || !(owner instanceof String)) {
+			return null;
+		}
+
+		Slice result = new Slice((Integer) id, (String) owner);
+
+		if(input.containsKey("successor") && (input.get("successor") instanceof String)) {
+			result.successor = (String) input.get("successor");
+		}
+
+		if(input.containsKey("managers") && (input.get("managers") instanceof List)) {
+			List<?> managers = (List<?>) input.get("managers");
+			for(Object manager : managers) {
+				if(manager instanceof String) {
+					result.managers.add((String) manager);
+				}
+			}
+		}
+
+		if(input.containsKey("members") && (input.get("members") instanceof List)) {
+			List<?> members = (List<?>) input.get("members");
+			for(Object member : members) {
+				if(member instanceof String) {
+					result.members.add((String) member);
+				}
+			}
+		}
+
+		if(input.containsKey("exits") && (input.get("exits") instanceof List)) {
+			List<?> exits = (List<?>) input.get("exits");
+			for(Object exit : exits) {
+				if(exit instanceof SliceExitPortal) {
+					result.exits.add((SliceExitPortal) exit);
+				}
+			}
+		}
 
 		return result;
 	}

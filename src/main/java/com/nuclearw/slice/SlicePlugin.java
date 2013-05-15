@@ -12,8 +12,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.collect.HashBasedTable;
-
 public class SlicePlugin extends JavaPlugin {
 	/*
 	 * A mapping of all "chevrons" attached to portals that we know about in each overworld.
@@ -22,10 +20,10 @@ public class SlicePlugin extends JavaPlugin {
 	HashMap<String, HashSet<Location>> overworldChevrons = new HashMap<String, HashSet<Location>>();
 
 	/*
-	 * A table of x / z -> Portal pairs for each overworld.
+	 * A matrix of x y z -> Portal mappings for each overworld.
 	 * This lets us get the portal for a given chevron of that portal quickly
 	 */
-	HashMap<String, HashBasedTable<Integer, Integer, SliceEntrancePortal>> overworldPortals = new HashMap<String, HashBasedTable<Integer, Integer, SliceEntrancePortal>>();
+	HashMap<String, HashBasedMatrix<Integer, Integer, Integer, SliceEntrancePortal>> overworldPortals = new HashMap<String, HashBasedMatrix<Integer, Integer, Integer, SliceEntrancePortal>>();
 
 	/*
 	 * A mapping of all active slices that exist to the overworld it is attached to.
@@ -53,21 +51,22 @@ public class SlicePlugin extends JavaPlugin {
 			chevronLocations = new HashSet<Location>();
 		}
 
-		// Get and create an empty HashBasedTable for chevron to portal mappings in the overworld, if it is not made yet.
-		HashBasedTable<Integer, Integer, SliceEntrancePortal> chevronToPortalTable = overworldPortals.get(worldName);
-		if(chevronToPortalTable == null) {
-			chevronToPortalTable = HashBasedTable.create();
+		// Get and create an empty HashBasedMatrix for chevron to portal mappings in the overworld, if it is not made yet.
+		HashBasedMatrix<Integer, Integer, Integer, SliceEntrancePortal> chevronToPortalMatrix = overworldPortals.get(worldName);
+		if(chevronToPortalMatrix == null) {
+			chevronToPortalMatrix = HashBasedMatrix.create();
 		}
 
-		// Place all chevrons from all portals into chevronLocations and chevronToPortalTable
+		// Place all chevrons from all portals into chevronLocations and chevronToPortalMatrix
 		for(SliceEntrancePortal portal : portals) {
 			Set<Location> locations = portal.getChevrons();
 			for(Location location : locations) {
 				chevronLocations.add(location);
 
 				final int x = location.getBlockX();
+				final int y = location.getBlockY();
 				final int z = location.getBlockZ();
-				chevronToPortalTable.put(x, z, portal);
+				chevronToPortalMatrix.put(x, y, z, portal);
 			}
 		}
 

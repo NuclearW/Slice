@@ -1,9 +1,14 @@
 package com.nuclearw.slice;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
-public class Slice {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+public class Slice implements ConfigurationSerializable {
 	// TODO: Make this class represent a slice, a slice should know it's id number, its owner, its successor, its managers, its members, and its exits.
 	// It will be responsible for checking if a person may enter a slice. It is also responsible for creating a new exit when it has no exits.
 
@@ -90,5 +95,24 @@ public class Slice {
 
 	public int exitCount() {
 		return exits.size();
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		HashMap<String, Object> result = new HashMap<String, Object>();
+
+		// These are the bare minimum required for this to be saved.
+		result.put("id", id);
+		result.put("owner", owner);
+
+		// These are extras, and may not necessarily be set
+		result.put("successor", successor);
+		result.put("managers", new LinkedList<String>(managers));
+		result.put("members", new LinkedList<String>(members));
+
+		// TODO: Add SliceExitPortal to ConfigurationSerialization
+		result.put("exits", new LinkedList<SliceExitPortal>(exits));
+
+		return result;
 	}
 }
